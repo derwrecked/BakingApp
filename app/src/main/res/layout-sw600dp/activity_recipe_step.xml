@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    tools:context="com.derekudacityclassprojects.bakingapp.RecipeStepListActivity">
+    <fragment
+        android:layout_weight="1"
+        class = "com.derekudacityclassprojects.bakingapp.FragmentRecipeStepList.RecipeStepListFragment"
+        android:id="@+id/recipeStepListFragment"
+        android:layout_marginRight="10dp"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"/>
+    <fragment
+        android:layout_weight="2"
+        class = "com.derekudacityclassprojects.bakingapp.FragmentMediaAndInstruction.MediaInstructionFragment"
+        android:id="@+id/step_media_instruction_fragment"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"/>
+</LinearLayout>
