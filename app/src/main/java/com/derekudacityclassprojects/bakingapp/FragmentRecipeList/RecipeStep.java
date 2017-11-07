@@ -8,15 +8,15 @@ public class RecipeStep{
     private int id;
     private String shortDescription;
     private String description;
-    private String videoUrl;
-    private String thumbnailUrl;
+    private String videoURL;
+    private String thumbnailURL;
 
-    public RecipeStep(int id, String shortDescription, String description, String videoUrl, String thumbnailUrl) {
+    public RecipeStep(int id, String shortDescription, String description, String videoURL, String thumbnailURL) {
         this.id = id;
         this.shortDescription = shortDescription;
         this.description = description;
-        this.videoUrl = videoUrl;
-        this.thumbnailUrl = thumbnailUrl;
+        this.videoURL = videoURL;
+        this.thumbnailURL = thumbnailURL;
     }
 
     public int getId() {
@@ -43,19 +43,19 @@ public class RecipeStep{
         this.description = description;
     }
 
-    public String getVideoUrl() {
-        return videoUrl;
+    public String getVideoURL() {
+        return videoURL;
     }
 
-    public void setVideoUrl(String videoUrl) {
-        this.videoUrl = videoUrl;
+    public void setVideoURL(String videoURL) {
+        this.videoURL = videoURL;
     }
 
-    public String getThumbnailUrl() {
-        return thumbnailUrl;
+    public String getThumbnailURL() {
+        return thumbnailURL;
     }
 
-    public void setThumbnailUrl(String thumbnailUrl) {
-        this.thumbnailUrl = thumbnailUrl;
+    public void setThumbnailURL(String thumbnailURL) {
+        this.thumbnailURL = thumbnailURL;
     }
 }

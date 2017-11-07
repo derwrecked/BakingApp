@@ -1,7 +1,10 @@
 package com.derekudacityclassprojects.bakingapp;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -59,6 +62,14 @@ public class RecipeStepListActivity extends AppCompatActivity implements RecipeS
             // DisplayFragment (Fragment B) is in the layout (tablet layout),
             // so tell the fragment to update
             mediaInstructionFragment.setInstruction(item.getDescription());
+            if (item.getVideoURL() == null
+                    || item.getVideoURL().isEmpty()
+                    || ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET)
+                    != PackageManager.PERMISSION_GRANTED) {
+                mediaInstructionFragment.setVideoUri(null);
+            } else {
+                mediaInstructionFragment.setVideoUri(Uri.parse(item.getVideoURL()));
+            }
         }
     }
 

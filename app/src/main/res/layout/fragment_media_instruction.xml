@@ -5,13 +5,12 @@
     android:orientation="vertical"
     tools:context="com.derekudacityclassprojects.bakingapp.FragmentMediaAndInstruction.MediaInstructionFragment">
 
-    <!-- Placeholder -->
-    <TextView
+    <com.google.android.exoplayer2.ui.SimpleExoPlayerView
+        android:id="@+id/playerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="3"
-        android:gravity="center"
-        android:text="EXOPLAYER" />
+        android:gravity="center" />
 
     <TextView
         android:id="@+id/media_instruction_step_description_text_view"
