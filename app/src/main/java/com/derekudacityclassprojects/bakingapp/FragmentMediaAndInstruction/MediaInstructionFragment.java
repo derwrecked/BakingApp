@@ -16,9 +16,12 @@ import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.derekudacityclassprojects.bakingapp.FragmentRecipeList.RecipeListFragment;
 import com.derekudacityclassprojects.bakingapp.R;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
@@ -49,6 +52,11 @@ public class MediaInstructionFragment extends Fragment implements Player.EventLi
     private SimpleExoPlayerView mPlayerView;
     private static MediaSessionCompat mMediaSession;
     private PlaybackStateCompat.Builder mStateBuilder;
+    private String stepDescription = "";
+    private Uri mediaUrl = null;
+    private ImageView noMediaImageView;
+    private Button nextStepButton;
+    private Button previousStepButton;
 
 
     private OnFragmentInteractionListener mListener;
@@ -69,14 +77,47 @@ public class MediaInstructionFragment extends Fragment implements Player.EventLi
         View view = inflater.inflate(R.layout.fragment_media_instruction, container, false);
         mPlayerView = view.findViewById(R.id.playerView);
 
+        TextView textView = view.findViewById(R.id.media_instruction_step_description_text_view);
+        textView.setText(stepDescription);
+
+        nextStepButton = view.findViewById(R.id.media_fragment_next_step);
+        nextStepButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onButtonPressed(true);
+            }
+        });
+
+        previousStepButton = view.findViewById(R.id.media_fragment_previous_step);
+        previousStepButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onButtonPressed(false);
+            }
+        });
+        noMediaImageView = view.findViewById(R.id.no_media_image_view);
+
+        if(mExoPlayer != null){
+            mExoPlayer.stop();
+            mExoPlayer.release();
+            mExoPlayer = null;
+        }
+
+        if(mediaUrl != null){
+            noMediaImageView.setVisibility(View.GONE);
+            // Initialize the Media Session.
+            initializeMediaSession();
+            // Initialize the player.
+            initializePlayer(mediaUrl, getContext());
+        }
         // Inflate the layout for this fragment
         return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
+    public void onButtonPressed(boolean isNext) {
         if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+            mListener.onFragmentInteraction(isNext);
         }
     }
 
@@ -101,9 +142,6 @@ public class MediaInstructionFragment extends Fragment implements Player.EventLi
     public void onDestroy() {
         super.onDestroy();
         releasePlayer();
-        if(mMediaSession != null){
-            mMediaSession.setActive(false);
-        }
     }
 
     /**
@@ -118,31 +156,15 @@ public class MediaInstructionFragment extends Fragment implements Player.EventLi
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void onFragmentInteraction(boolean isNext);
     }
 
     public void setInstruction(String instruction){
-        TextView textView = (TextView) getView().findViewById(R.id.media_instruction_step_description_text_view);
-        textView.setText(instruction);
+        stepDescription = instruction;
     }
 
     public void setVideoUri(Uri uri){
-        if(mExoPlayer != null){
-            mExoPlayer.stop();
-            mExoPlayer.release();
-            mExoPlayer = null;
-        }
-        if(uri == null){
-            // Load the question mark as the background image until the user answers the question.
-            mPlayerView.setDefaultArtwork(BitmapFactory.decodeResource
-                    (getResources(), R.drawable.ic_no_video_black_24dp));
-        }else{
-            // Initialize the Media Session.
-            initializeMediaSession();
-            // Initialize the player.
-            initializePlayer(uri, getContext());
-        }
-
+        mediaUrl = uri;
     }
 
 
@@ -266,10 +288,15 @@ public class MediaInstructionFragment extends Fragment implements Player.EventLi
     /**
      * Release ExoPlayer.
      */
-    private void releasePlayer() {
+    public void releasePlayer() {
         if(mExoPlayer != null){
             mExoPlayer.stop();
             mExoPlayer.release();
+            mExoPlayer = null;
+        }
+        if(mMediaSession != null){
+            mMediaSession.setActive(false);
+            mMediaSession.release();
             mExoPlayer = null;
         }
     }

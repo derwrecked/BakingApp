@@ -5,20 +5,31 @@
     android:orientation="vertical"
     tools:context="com.derekudacityclassprojects.bakingapp.FragmentMediaAndInstruction.MediaInstructionFragment">
 
-    <com.google.android.exoplayer2.ui.SimpleExoPlayerView
-        android:id="@+id/playerView"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="3"
-        android:gravity="center" />
+        android:layout_weight="3">
+        <com.google.android.exoplayer2.ui.SimpleExoPlayerView
+            android:id="@+id/playerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center" />
+        <ImageView
+            android:id="@+id/no_media_image_view"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_no_video_black_24dp"
+            android:minHeight="80dp"
+            android:minWidth="80dp"/>
+    </FrameLayout>
 
     <TextView
         android:id="@+id/media_instruction_step_description_text_view"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_margin="5dp"
-        android:layout_weight="1"
-        android:text="Put description here" />
+        android:layout_weight="1" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -27,16 +38,18 @@
         android:orientation="horizontal">
 
         <Button
+            android:id="@+id/media_fragment_previous_step"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="BACK" />
+            android:text="@string/previous_recipe_step_button_text" />
 
         <Button
+            android:id="@+id/media_fragment_next_step"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="NEXT" />
+            android:text="@string/next_recipe_step_button_text" />
     </LinearLayout>
 
 </LinearLayout>

@@ -4,9 +4,13 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.FrameLayout;
 
 import com.derekudacityclassprojects.bakingapp.FragmentMediaAndInstruction.MediaInstructionFragment;
 import com.derekudacityclassprojects.bakingapp.FragmentRecipeList.Recipe;
@@ -15,11 +19,15 @@ import com.derekudacityclassprojects.bakingapp.FragmentRecipeStepList.RecipeStep
 
 import java.util.List;
 
-public class RecipeStepListActivity extends AppCompatActivity implements RecipeStepListFragment.OnListFragmentInteractionListener, MediaInstructionFragment.OnFragmentInteractionListener {
+public class RecipeStepListActivity extends AppCompatActivity implements RecipeStepListFragment.OnListFragmentInteractionListener,
+        MediaInstructionFragment.OnFragmentInteractionListener {
     public static final String EXTRA_RECIPE_ID = "recipeid";
     public static final String EXTRA_RECIPE_STEP_ID = "recipestepid";
-    private List<RecipeStep> recipeSteps;
+    private List<RecipeStep> recipeStepList;
     private Recipe recipe;
+    private RecipeStep recipeStep;
+    private RecipeStep previousStep;
+    private MediaInstructionFragment mediaInstructionFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,14 +41,14 @@ public class RecipeStepListActivity extends AppCompatActivity implements RecipeS
         for (Recipe recipe : recipes) {
             if (recipe.getId() == selection) {
                 this.recipe = recipe;
-                this.recipeSteps = recipe.getSteps();
+                this.recipeStepList = recipe.getSteps();
                 break;
             }
         }
         RecipeStepListFragment stepListFragment = (RecipeStepListFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.recipeStepListFragment);
-        if (recipeSteps != null) {
-            stepListFragment.setListRecipeList(recipeSteps);
+        if (recipeStepList != null) {
+            stepListFragment.setListRecipeList(recipeStepList);
         }
 
     }
@@ -48,9 +56,11 @@ public class RecipeStepListActivity extends AppCompatActivity implements RecipeS
 
     @Override
     public void onListFragmentInteraction(RecipeStep item) {
-        MediaInstructionFragment mediaInstructionFragment = (MediaInstructionFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.step_media_instruction_fragment);
-        if (mediaInstructionFragment == null) {
+        // set current step
+        recipeStep = item;
+
+        FrameLayout frameLayout = findViewById(R.id.step_media_instruction_fragment_holder);
+        if (frameLayout == null) {
             // DisplayFragment (Fragment B) is not in the layout (handset layout),
             // so start DisplayActivity (Activity B)
             // and pass it the info about the selected item
@@ -59,6 +69,7 @@ public class RecipeStepListActivity extends AppCompatActivity implements RecipeS
             intent.putExtra(EXTRA_RECIPE_STEP_ID, item.getId());
             startActivity(intent);
         } else {
+            mediaInstructionFragment = new MediaInstructionFragment();
             // DisplayFragment (Fragment B) is in the layout (tablet layout),
             // so tell the fragment to update
             mediaInstructionFragment.setInstruction(item.getDescription());
@@ -70,11 +81,89 @@ public class RecipeStepListActivity extends AppCompatActivity implements RecipeS
             } else {
                 mediaInstructionFragment.setVideoUri(Uri.parse(item.getVideoURL()));
             }
+            // add fragment
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.step_media_instruction_fragment_holder, mediaInstructionFragment);
+            fragmentTransaction.commit();
         }
     }
 
+    /**
+     * If at the start and previous is pressed do nothing, if at the end and next
+     * is pressed do nothing.
+     * @param isNext
+     */
     @Override
-    public void onFragmentInteraction(Uri uri) {
+    public void onFragmentInteraction(boolean isNext) {
+        if((isNext &&  (recipeStep.getId() == recipeStepList.get(recipeStepList.size() - 1).getId()))
+                || (!isNext && recipeStep.getId() == 0)) {
+            // do nothing
+        }else{
+            if(mediaInstructionFragment != null){
+                mediaInstructionFragment.releasePlayer();
+            }
+            if (isNext) {
+                recipeStep = getNextStep(recipeStep, recipeStepList);
+            } else {
+                recipeStep = getPreviousStep(recipeStep, recipeStepList);
+            }
+            mediaInstructionFragment = createFragment(recipeStep);
+            // add fragment
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.step_media_instruction_fragment_holder, mediaInstructionFragment);
+            fragmentTransaction.commit();
+        }
+    }
 
+    /**
+     * Get next step.
+     * @param currentStep
+     * @param recipeStepList
+     * @return
+     */
+    private static RecipeStep getNextStep(final RecipeStep currentStep, final List<RecipeStep> recipeStepList) {
+        if (recipeStepList.size() == 0
+                || currentStep.getId() == recipeStepList.get(recipeStepList.size() - 1).getId()) {
+            return currentStep;
+        } else {
+            return recipeStepList.get(currentStep.getId() + 1);
+        }
+    }
+
+    /**
+     * Get previous step.
+     * @param currentStep
+     * @param recipeStepList
+     * @return
+     */
+    private static RecipeStep getPreviousStep(final RecipeStep currentStep, final List<RecipeStep> recipeStepList) {
+        if (currentStep.getId() == 0) {
+            return currentStep;
+        } else {
+            return recipeStepList.get(currentStep.getId() - 1);
+        }
+    }
+
+    /**
+     * Create fragment with media and step info.
+     * @param recipeStep
+     * @return
+     */
+    private MediaInstructionFragment createFragment(RecipeStep recipeStep) {
+        MediaInstructionFragment mediaInstructionFragment = new MediaInstructionFragment();
+        // DisplayFragment (Fragment B) is in the layout (tablet layout),
+        // so tell the fragment to update
+        mediaInstructionFragment.setInstruction(recipeStep.getDescription());
+        if (recipeStep.getVideoURL() == null
+                || recipeStep.getVideoURL().isEmpty()
+                || ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET)
+                != PackageManager.PERMISSION_GRANTED) {
+            mediaInstructionFragment.setVideoUri(null);
+        } else {
+            mediaInstructionFragment.setVideoUri(Uri.parse(recipeStep.getVideoURL()));
+        }
+        return mediaInstructionFragment;
     }
 }
