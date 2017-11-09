@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.derekudacityclassprojects.bakingapp">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -14,15 +14,28 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".RecipeStepListActivity"
-            android:parentActivityName=".MainActivity"
-            android:exported="false"/>
-        <activity android:name=".RecipeSingleStepDisplayActivity"
-            android:parentActivityName=".RecipeStepListActivity"
-            android:exported="false"/>
+        <activity
+            android:name=".RecipeStepListActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".RecipeSingleStepDisplayActivity"
+            android:exported="false"
+            android:parentActivityName=".RecipeStepListActivity" />
+
+        <receiver android:name=".RecipeWidgetProvider">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/recipe_widget_provider_info" />
+        </receiver>
     </application>
 
 </manifest>
