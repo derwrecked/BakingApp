@@ -1,6 +1,8 @@
 package com.derekudacityclassprojects.bakingapp;
 
 import android.Manifest;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -16,6 +18,7 @@ import com.derekudacityclassprojects.bakingapp.FragmentMediaAndInstruction.Media
 import com.derekudacityclassprojects.bakingapp.FragmentRecipeList.Recipe;
 import com.derekudacityclassprojects.bakingapp.FragmentRecipeList.RecipeStep;
 import com.derekudacityclassprojects.bakingapp.FragmentRecipeStepList.RecipeStepListFragment;
+import com.derekudacityclassprojects.bakingapp.RecipeWidget.RecipeWidgetProvider;
 
 import java.util.List;
 
@@ -50,6 +53,16 @@ public class RecipeStepListActivity extends AppCompatActivity implements RecipeS
         if (recipeStepList != null) {
             stepListFragment.setListRecipeList(recipeStepList);
         }
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
+        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(this, RecipeWidgetProvider.class));
+        int recipeId;
+        if(recipe == null){
+            recipeId = -1;
+        }else{
+            recipeId = recipe.getId();
+        }
+        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_list_view);
+        RecipeWidgetProvider.updateAllRecipeAppWidgets(this, appWidgetManager, appWidgetIds, recipeId);
 
     }
 
@@ -115,6 +128,11 @@ public class RecipeStepListActivity extends AppCompatActivity implements RecipeS
             fragmentTransaction.replace(R.id.step_media_instruction_fragment_holder, mediaInstructionFragment);
             fragmentTransaction.commit();
         }
+    }
+
+    @Override
+    public int getCurrentRecipeId() {
+        return recipe.getId();
     }
 
     /**

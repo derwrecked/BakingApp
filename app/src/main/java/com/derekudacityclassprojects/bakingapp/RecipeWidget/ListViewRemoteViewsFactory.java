@@ -6,10 +6,14 @@ import android.os.Bundle;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
+import com.derekudacityclassprojects.bakingapp.FragmentRecipeList.Ingredient;
 import com.derekudacityclassprojects.bakingapp.FragmentRecipeList.Recipe;
 import com.derekudacityclassprojects.bakingapp.JSONUtils;
 import com.derekudacityclassprojects.bakingapp.MainActivity;
 import com.derekudacityclassprojects.bakingapp.R;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Derek on 11/9/2017.
@@ -17,15 +21,10 @@ import com.derekudacityclassprojects.bakingapp.R;
 
 public class ListViewRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     private Context context;
-    private Recipe[] recipes;
+    private List<Ingredient> ingredientList;
 
-    public ListViewRemoteViewsFactory(Context context, Recipe[] recipes) {
+    public ListViewRemoteViewsFactory(Context context) {
         this.context = context;
-        if(recipes == null){
-            this.recipes = new Recipe[0];
-        }else{
-            this.recipes = recipes;
-        }
     }
 
     @Override
@@ -37,7 +36,17 @@ public class ListViewRemoteViewsFactory implements RemoteViewsService.RemoteView
     @Override
     public void onDataSetChanged() {
         Recipe[] recipes = JSONUtils.getAllRecipes("baking", context);
-        this.recipes = recipes;
+        ingredientList = new ArrayList<>();
+        try {
+            for (Recipe item : recipes) {
+                if (item.getId() == RecipeWidgetProvider.currentRecipeId) {
+                    ingredientList = recipes[RecipeWidgetProvider.currentRecipeId].getIngredients();
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            ingredientList = new ArrayList<>();
+        }
     }
 
     @Override
@@ -47,18 +56,19 @@ public class ListViewRemoteViewsFactory implements RemoteViewsService.RemoteView
 
     @Override
     public int getCount() {
-        return recipes.length;
+        return ingredientList.size();
     }
 
     @Override
     public RemoteViews getViewAt(int position) {
         RemoteViews row = new RemoteViews(context.getPackageName(), R.layout.recipe_widget_list_view_row);
-        row.setTextViewText(R.id.widget_recipe_holder_text_view, recipes[position].getName());
+        String ingredientString = ingredientList.get(position).getQuantity() + " " + ingredientList.get(position).getMeasure() + " - " + ingredientList.get(position).getIngredient();
+        row.setTextViewText(R.id.widget_recipe_holder_text_view, ingredientString);
 
-        // template pending intent
-        Intent fillInIntent = new Intent();
-        fillInIntent.putExtra(MainActivity.EXTRA_RECIPE_ID_SELECTION, recipes[position].getId());
-        row.setOnClickFillInIntent(R.id.widget_food_image_view, fillInIntent);
+        //// template pending intent
+        //Intent fillInIntent = new Intent();
+        //fillInIntent.putExtra(MainActivity.EXTRA_RECIPE_ID_SELECTION, recipes[position].getId());
+        //row.setOnClickFillInIntent(R.id.widget_food_image_view, fillInIntent);
         return row;
     }
 

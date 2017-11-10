@@ -1,6 +1,7 @@
 package com.derekudacityclassprojects.bakingapp.FragmentRecipeStepList;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -9,8 +10,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.derekudacityclassprojects.bakingapp.FragmentRecipeList.RecipeStep;
+import com.derekudacityclassprojects.bakingapp.IngredientsActivity;
 import com.derekudacityclassprojects.bakingapp.R;
 
 import java.util.ArrayList;
@@ -22,13 +25,16 @@ import java.util.List;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class RecipeStepListFragment extends Fragment  {
-
+public class RecipeStepListFragment extends Fragment {
+    public static final String EXTRA_RECIPE_ID = "EXTRA_RECIPE_ID";
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
+    private Button ingredientsButton;
+    private RecyclerView recyclerView;
+    private final int INGREDIENTS_ACTIVITY_REQUEST_CODE = 500;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -60,18 +66,25 @@ public class RecipeStepListFragment extends Fragment  {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_recipestepitem_list, container, false);
-
-        // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
-            if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+        ingredientsButton = view.findViewById(R.id.recipe_step_list_ingredients_button);
+        ingredientsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), IngredientsActivity.class);
+                intent.putExtra(EXTRA_RECIPE_ID, mListener.getCurrentRecipeId());
+                startActivityForResult(intent, INGREDIENTS_ACTIVITY_REQUEST_CODE);
             }
-            recyclerView.setAdapter(new MyRecipeStepListRecyclerViewAdapter(new ArrayList<RecipeStep>(), mListener));
+        });
+
+        Context context = view.getContext();
+        recyclerView = (RecyclerView) view.findViewById(R.id.recipe_step_list_recycler_view);
+        if (mColumnCount <= 1) {
+            recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        } else {
+            recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
         }
+        recyclerView.setAdapter(new MyRecipeStepListRecyclerViewAdapter(new ArrayList<RecipeStep>(), mListener));
+
         return view;
     }
 
@@ -106,10 +119,11 @@ public class RecipeStepListFragment extends Fragment  {
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
         void onListFragmentInteraction(RecipeStep item);
+
+        int getCurrentRecipeId();
     }
 
-    public void setListRecipeList(List<RecipeStep> recipeStepList){
-        RecyclerView recyclerView = (RecyclerView) getView();
+    public void setListRecipeList(List<RecipeStep> recipeStepList) {
         MyRecipeStepListRecyclerViewAdapter adapter = (MyRecipeStepListRecyclerViewAdapter) recyclerView.getAdapter();
         adapter.setList(recipeStepList);
     }

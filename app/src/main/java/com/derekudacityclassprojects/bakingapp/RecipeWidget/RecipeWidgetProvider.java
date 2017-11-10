@@ -15,19 +15,23 @@ import com.derekudacityclassprojects.bakingapp.RecipeStepListActivity;
  * Implementation of App Widget functionality.
  */
 public class RecipeWidgetProvider extends AppWidgetProvider {
-
-    static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
-                                int appWidgetId) {
-        //Bundle options = appWidgetManager.getAppWidgetOptions(appWidgetId);
-        //// Construct the RemoteViews object
-        //RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.recipe_widget_provider);
-        //// get all recipes
-        //Recipe[] recipes = JSONUtils.getAllRecipes("baking", context);
-        //// update widget based on height
-        //updateWidgetViews(context, views, recipes, options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT));
-        RemoteViews views = getRecipeListViewRemoteView(context);
+    public static int currentRecipeId = 0; // default to 0
+    public static void updateRecipeAppWidget(Context context, AppWidgetManager appWidgetManager,
+                                int appWidgetId, int recipeId) {
+        currentRecipeId = recipeId;
+        RemoteViews views = getRecipeListViewRemoteView(context, currentRecipeId);
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
+    }
+
+    public static void updateAllRecipeAppWidgets(Context context, AppWidgetManager appWidgetManager,
+                                             int[] appWidgetIds, int recipeId) {
+        currentRecipeId = recipeId;
+        RemoteViews views = getRecipeListViewRemoteView(context, currentRecipeId);
+        // There may be multiple widgets active, so update all of them
+        for (int appWidgetId : appWidgetIds) {
+            appWidgetManager.updateAppWidget(appWidgetId, views);
+        }
     }
 
     // Called when a new widget is created as well as every update interval
@@ -35,7 +39,7 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         // There may be multiple widgets active, so update all of them
         for (int appWidgetId : appWidgetIds) {
-            updateAppWidget(context, appWidgetManager, appWidgetId);
+            updateRecipeAppWidget(context, appWidgetManager, appWidgetId, currentRecipeId);
         }
     }
 
@@ -49,7 +53,7 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
      */
     @Override
     public void onAppWidgetOptionsChanged(Context context, AppWidgetManager appWidgetManager, int appWidgetId, Bundle newOptions) {
-        updateAppWidget(context, appWidgetManager, appWidgetId);
+        updateRecipeAppWidget(context, appWidgetManager, appWidgetId, currentRecipeId);
         super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions);
     }
 
@@ -63,16 +67,16 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
         // Enter relevant functionality for when the last widget is disabled
     }
 
-    private static RemoteViews getRecipeListViewRemoteView(Context context){
+    private static RemoteViews getRecipeListViewRemoteView(Context context, int recipeId){
         RemoteViews view = new RemoteViews(context.getPackageName(), R.layout.recipe_widget_list_view);
         // service acts as adapter
         Intent intent = new Intent(context, RecipeWidgetService.class);
         view.setRemoteAdapter(R.id.widget_list_view, intent);
         // set
         // pending intent
-        Intent appIntent = new Intent(context, RecipeStepListActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, appIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        view.setPendingIntentTemplate(R.id.widget_list_view, pendingIntent);
+        //Intent appIntent = new Intent(context, RecipeStepListActivity.class);
+        //PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, appIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        //view.setPendingIntentTemplate(R.id.widget_list_view, pendingIntent);
         return view;
     }
 
