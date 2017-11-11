@@ -57,7 +57,8 @@ public class MediaInstructionFragment extends Fragment implements Player.EventLi
     private ImageView noMediaImageView;
     private Button nextStepButton;
     private Button previousStepButton;
-
+    private String SAVE_STATE_URI_KEY = "SAVE_STATE_URI_KEY";
+    private String SAVE_STATE_STEP_KEY = "SAVE_STATE_STEP_KEY";
 
     private OnFragmentInteractionListener mListener;
 
@@ -67,6 +68,15 @@ public class MediaInstructionFragment extends Fragment implements Player.EventLi
 
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if(mediaUrl != null){
+            outState.putString(SAVE_STATE_URI_KEY, mediaUrl.toString());
+        }
+        outState.putString(SAVE_STATE_STEP_KEY, stepDescription);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
@@ -74,6 +84,13 @@ public class MediaInstructionFragment extends Fragment implements Player.EventLi
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        if(savedInstanceState != null){
+            String holder = savedInstanceState.getString(SAVE_STATE_URI_KEY, null);
+            if(holder != null){
+                mediaUrl = Uri.parse(holder);
+            }
+            this.stepDescription = savedInstanceState.getString(SAVE_STATE_STEP_KEY, "");
+        }
         View view = inflater.inflate(R.layout.fragment_media_instruction, container, false);
         mPlayerView = view.findViewById(R.id.playerView);
 

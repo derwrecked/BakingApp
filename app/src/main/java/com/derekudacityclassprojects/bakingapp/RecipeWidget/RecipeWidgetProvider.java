@@ -8,8 +8,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.RemoteViews;
 
+import com.derekudacityclassprojects.bakingapp.FragmentRecipeList.Recipe;
+import com.derekudacityclassprojects.bakingapp.JSONUtils;
 import com.derekudacityclassprojects.bakingapp.R;
 import com.derekudacityclassprojects.bakingapp.RecipeStepListActivity;
+
+import java.util.ArrayList;
 
 /**
  * Implementation of App Widget functionality.
@@ -69,9 +73,22 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
 
     private static RemoteViews getRecipeListViewRemoteView(Context context, int recipeId){
         RemoteViews view = new RemoteViews(context.getPackageName(), R.layout.recipe_widget_list_view);
+        Recipe[] recipes = JSONUtils.getAllRecipes("baking", context);
+        String title = "";
+        try {
+            for (Recipe item : recipes) {
+                if (item.getId() == recipeId) {
+                    title += item.getName();
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            title = context.getString(R.string.widget_title_no_recipe_selected);
+        }
         // service acts as adapter
         Intent intent = new Intent(context, RecipeWidgetService.class);
         view.setRemoteAdapter(R.id.widget_list_view, intent);
+        view.setTextViewText(R.id.widget_recipe_title, title);
         // set
         // pending intent
         //Intent appIntent = new Intent(context, RecipeStepListActivity.class);

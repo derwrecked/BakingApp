@@ -8,4 +8,5 @@
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
     <string name="ingredients_activity_no_ingredients_found">No ingredients found.</string>
+    <string name="widget_title_no_recipe_selected">No recipe selected.</string>
 </resources>
