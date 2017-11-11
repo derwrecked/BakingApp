@@ -19,7 +19,8 @@ import java.util.ArrayList;
  * Implementation of App Widget functionality.
  */
 public class RecipeWidgetProvider extends AppWidgetProvider {
-    public static int currentRecipeId = 0; // default to 0
+    public static int currentRecipeId = 1; // default to 1
+
     public static void updateRecipeAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId, int recipeId) {
         currentRecipeId = recipeId;
@@ -78,7 +79,7 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
         try {
             for (Recipe item : recipes) {
                 if (item.getId() == recipeId) {
-                    title += item.getName();
+                    title = item.getName();
                     break;
                 }
             }

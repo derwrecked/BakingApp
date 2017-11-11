@@ -60,6 +60,15 @@ public class MediaInstructionFragment extends Fragment implements Player.EventLi
     private String SAVE_STATE_URI_KEY = "SAVE_STATE_URI_KEY";
     private String SAVE_STATE_STEP_KEY = "SAVE_STATE_STEP_KEY";
 
+
+    public String getStepDescription() {
+        return stepDescription;
+    }
+
+    public Uri getMediaUrl() {
+        return mediaUrl;
+    }
+
     private OnFragmentInteractionListener mListener;
 
     public MediaInstructionFragment() {

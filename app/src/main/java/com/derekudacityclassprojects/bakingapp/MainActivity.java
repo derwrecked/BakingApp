@@ -15,6 +15,7 @@ import com.derekudacityclassprojects.bakingapp.FragmentRecipeList.RecipeListFrag
 
 public class MainActivity extends AppCompatActivity implements RecipeListFragment.OnListFragmentInteractionListener {
     public static final String EXTRA_RECIPE_ID_SELECTION = "recipe_id";
+    public static final int RECIPE_REQUEST_CODE = 45;
     private final String TAG = MainActivity.class.getSimpleName();
     private final int MY_PERMISSIONS_REQUEST_INTERNET = 28;
     private RecipeListFragment recipeListFragment;
@@ -30,7 +31,7 @@ public class MainActivity extends AppCompatActivity implements RecipeListFragmen
     public void onListFragmentInteraction(Recipe item) {
         Intent intent = new Intent(this, RecipeStepListActivity.class);
         intent.putExtra(EXTRA_RECIPE_ID_SELECTION, item.getId());
-        startActivity(intent);
+        startActivityForResult(intent, RECIPE_REQUEST_CODE);
     }
 
     @Override

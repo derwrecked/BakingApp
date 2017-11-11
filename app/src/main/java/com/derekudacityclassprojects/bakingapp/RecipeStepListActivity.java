@@ -26,11 +26,13 @@ public class RecipeStepListActivity extends AppCompatActivity implements RecipeS
         MediaInstructionFragment.OnFragmentInteractionListener {
     public static final String EXTRA_RECIPE_ID = "recipeid";
     public static final String EXTRA_RECIPE_STEP_ID = "recipestepid";
+    public static final int SINGLE_STEP_DISPLAY_REQUEST_CODE = 78;
     private List<RecipeStep> recipeStepList;
     private Recipe recipe;
     private RecipeStep recipeStep;
     private RecipeStep previousStep;
     private MediaInstructionFragment mediaInstructionFragment;
+    public static final String MEDIA_INSTRUCTION_FRAGMENT_TAG = "MEDIA_INSTRUCTION_FRAGMENT_TAG";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +82,7 @@ public class RecipeStepListActivity extends AppCompatActivity implements RecipeS
             Intent intent = new Intent(this, RecipeSingleStepDisplayActivity.class);
             intent.putExtra(EXTRA_RECIPE_ID, recipe.getId());
             intent.putExtra(EXTRA_RECIPE_STEP_ID, item.getId());
-            startActivity(intent);
+            startActivityForResult(intent, SINGLE_STEP_DISPLAY_REQUEST_CODE);
         } else {
             mediaInstructionFragment = new MediaInstructionFragment();
             // DisplayFragment (Fragment B) is in the layout (tablet layout),
@@ -97,7 +99,9 @@ public class RecipeStepListActivity extends AppCompatActivity implements RecipeS
             // add fragment
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.step_media_instruction_fragment_holder, mediaInstructionFragment);
+            fragmentTransaction.replace(R.id.step_media_instruction_fragment_holder,
+                    mediaInstructionFragment,
+                    MEDIA_INSTRUCTION_FRAGMENT_TAG);
             fragmentTransaction.commit();
         }
     }
@@ -125,7 +129,7 @@ public class RecipeStepListActivity extends AppCompatActivity implements RecipeS
             // add fragment
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.step_media_instruction_fragment_holder, mediaInstructionFragment);
+            fragmentTransaction.replace(R.id.step_media_instruction_fragment_holder, mediaInstructionFragment, MEDIA_INSTRUCTION_FRAGMENT_TAG);
             fragmentTransaction.commit();
         }
     }

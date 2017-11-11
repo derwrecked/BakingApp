@@ -40,7 +40,7 @@ public class ListViewRemoteViewsFactory implements RemoteViewsService.RemoteView
         try {
             for (Recipe item : recipes) {
                 if (item.getId() == RecipeWidgetProvider.currentRecipeId) {
-                    ingredientList = recipes[RecipeWidgetProvider.currentRecipeId].getIngredients();
+                    ingredientList = item.getIngredients();
                     break;
                 }
             }

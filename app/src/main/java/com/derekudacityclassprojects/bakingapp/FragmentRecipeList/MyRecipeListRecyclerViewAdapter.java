@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.derekudacityclassprojects.bakingapp.FragmentRecipeList.RecipeListFragment.OnListFragmentInteractionListener;
 import com.derekudacityclassprojects.bakingapp.R;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 public class MyRecipeListRecyclerViewAdapter extends RecyclerView.Adapter<MyRecipeListRecyclerViewAdapter.ViewHolder> {
@@ -42,8 +43,16 @@ public class MyRecipeListRecyclerViewAdapter extends RecyclerView.Adapter<MyReci
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
         holder.recipeName.setText(mValues.get(position).getName());
-        holder.recipeShortDescription.setText("---Temporary Description---");
-        holder.recipeThumbnail.setImageBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.icons8hamburger));
+        if(holder.mItem.getImage() == null || holder.mItem.getImage().isEmpty()){
+            holder.recipeThumbnail.setImageBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.icons8cutlery));
+        }else{
+            try {
+                Picasso.with(context).load(holder.mItem.getImage()).into(holder.recipeThumbnail);
+            }catch(Exception e){
+                // if some error occurs use default image.
+                holder.recipeThumbnail.setImageBitmap(BitmapFactory.decodeResource(context.getResources(), R.drawable.icons8cutlery));
+            }
+        }
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,7 +74,6 @@ public class MyRecipeListRecyclerViewAdapter extends RecyclerView.Adapter<MyReci
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView recipeName;
-        public final TextView recipeShortDescription;
         public final ImageView recipeThumbnail;
         public Recipe mItem;
 
@@ -73,7 +81,6 @@ public class MyRecipeListRecyclerViewAdapter extends RecyclerView.Adapter<MyReci
             super(view);
             mView = view;
             recipeName = (TextView) view.findViewById(R.id.recipe_name);
-            recipeShortDescription = (TextView) view.findViewById(R.id.recipe_description);
             recipeThumbnail = (ImageView) view.findViewById(R.id.recipe_thumbnail);
         }
 
