@@ -50,7 +50,7 @@ public class Test_RecipeListFragment_Recycler_View_Item_OnClick_Intent {
     @Test
     public void verify_recipe_list_fragment_on_click_induces_intent() {
         // get all recipes
-        Recipe[] recipes = JSONUtils.getAllRecipes("baking", mActivityRule.getActivity());
+        Recipe[] recipes = JSONUtils.getAllRecipes("baking_test", mActivityRule.getActivity());
 
         // loop through all recipes
         for(int i = 0; i < recipes.length; i++){

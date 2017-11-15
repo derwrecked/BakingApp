@@ -47,7 +47,7 @@ public class Test_RecipeStepListFragment_Ingredients {
     @Test
     public void verify_ingredients_button_launches_intent_ingredients() {
         // get all recipes
-        Recipe[] recipes = JSONUtils.getAllRecipes("baking", ActivityTestRule.getActivity());
+        Recipe[] recipes = JSONUtils.getAllRecipes("baking_test", ActivityTestRule.getActivity());
 
         // loop through all recipes
         for(int i = 0; i < recipes.length; i++){

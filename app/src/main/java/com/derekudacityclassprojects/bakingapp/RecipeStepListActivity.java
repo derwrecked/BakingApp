@@ -66,6 +66,13 @@ public class RecipeStepListActivity extends AppCompatActivity implements RecipeS
         appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_list_view);
         RecipeWidgetProvider.updateAllRecipeAppWidgets(this, appWidgetManager, appWidgetIds, recipeId);
 
+        // has the same fragment already replaced the container and assumed its id?
+        MediaInstructionFragment existingFragment =
+                (MediaInstructionFragment) getSupportFragmentManager().findFragmentByTag(MEDIA_INSTRUCTION_FRAGMENT_TAG);
+        if (existingFragment != null)
+        {
+            mediaInstructionFragment = existingFragment;
+        }
     }
 
 

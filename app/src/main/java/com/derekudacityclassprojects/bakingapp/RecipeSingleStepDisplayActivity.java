@@ -3,6 +3,7 @@ package com.derekudacityclassprojects.bakingapp;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
@@ -24,6 +25,7 @@ public class RecipeSingleStepDisplayActivity extends AppCompatActivity implement
     private RecipeStep recipeStep;
     private List<RecipeStep> recipeStepList;
     private MediaInstructionFragment mediaInstructionFragment;
+    private String FRAGMENT_TAG = "FRAGMENT_TAG_SINGLE";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,12 +53,20 @@ public class RecipeSingleStepDisplayActivity extends AppCompatActivity implement
             }
         }
 
-        mediaInstructionFragment = createFragment(recipeStep);
-        // add fragment
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.step_media_instruction_fragment_holder, mediaInstructionFragment);
-        fragmentTransaction.commit();
+        // has the same fragment already replaced the container and assumed its id?
+        MediaInstructionFragment existingFragment =
+                (MediaInstructionFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
+        if (existingFragment != null)
+        {
+            mediaInstructionFragment = existingFragment;
+        }else{
+            mediaInstructionFragment = createFragment(recipeStep);
+            // add fragment
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.step_media_instruction_fragment_holder, mediaInstructionFragment, FRAGMENT_TAG);
+            fragmentTransaction.commit();
+        }
     }
 
     @Override

@@ -48,6 +48,7 @@ import com.google.android.exoplayer2.util.Util;
 public class MediaInstructionFragment extends Fragment implements Player.EventListener{
     private final static String TAG =  MediaInstructionFragment.class.getSimpleName();
     // EXOPLAYER variables
+    private long position = 0;
     private SimpleExoPlayer mExoPlayer;
     private SimpleExoPlayerView mPlayerView;
     private static MediaSessionCompat mMediaSession;
@@ -59,6 +60,7 @@ public class MediaInstructionFragment extends Fragment implements Player.EventLi
     private Button previousStepButton;
     private String SAVE_STATE_URI_KEY = "SAVE_STATE_URI_KEY";
     private String SAVE_STATE_STEP_KEY = "SAVE_STATE_STEP_KEY";
+    private String SAVE_STATE_PLAYER_POSITION = "SAVE_STATE_PLAYER_POSITION";
 
 
     public String getStepDescription() {
@@ -81,13 +83,9 @@ public class MediaInstructionFragment extends Fragment implements Player.EventLi
         if(mediaUrl != null){
             outState.putString(SAVE_STATE_URI_KEY, mediaUrl.toString());
         }
+        outState.putLong(SAVE_STATE_PLAYER_POSITION, position);
         outState.putString(SAVE_STATE_STEP_KEY, stepDescription);
         super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -99,6 +97,7 @@ public class MediaInstructionFragment extends Fragment implements Player.EventLi
                 mediaUrl = Uri.parse(holder);
             }
             this.stepDescription = savedInstanceState.getString(SAVE_STATE_STEP_KEY, "");
+            this.position = savedInstanceState.getLong(SAVE_STATE_PLAYER_POSITION, 0);
         }
         View view = inflater.inflate(R.layout.fragment_media_instruction, container, false);
         mPlayerView = view.findViewById(R.id.playerView);
@@ -159,6 +158,22 @@ public class MediaInstructionFragment extends Fragment implements Player.EventLi
     }
 
     @Override
+    public void onPause() {
+        if(mExoPlayer != null){
+            position = mExoPlayer.getContentPosition();
+            mExoPlayer.setPlayWhenReady(false);
+            mExoPlayer.getPlaybackState();
+            position = mExoPlayer.getCurrentPosition();
+        }
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
@@ -170,16 +185,6 @@ public class MediaInstructionFragment extends Fragment implements Player.EventLi
         releasePlayer();
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(boolean isNext);
@@ -307,6 +312,7 @@ public class MediaInstructionFragment extends Fragment implements Player.EventLi
             MediaSource mediaSource = new ExtractorMediaSource(mediaUri, new DefaultDataSourceFactory(
                     context, userAgent), new DefaultExtractorsFactory(), null, null);
             mExoPlayer.prepare(mediaSource);
+            mExoPlayer.seekTo(position);
             mExoPlayer.setPlayWhenReady(true);
         }
     }
