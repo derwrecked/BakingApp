@@ -11,7 +11,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.FrameLayout;
 
 import com.derekudacityclassprojects.bakingapp.FragmentMediaAndInstruction.MediaInstructionFragment;
@@ -42,7 +41,7 @@ public class RecipeStepListActivity extends AppCompatActivity implements RecipeS
             finish();
         }
         setContentView(R.layout.activity_recipe_step);
-        Recipe[] recipes = JSONUtils.getAllRecipes(JSONUtils.BAKING_JSON_FILE_NAME, getApplicationContext());
+        Recipe[] recipes = JSONUtils.getAllRecipesFromAsset(JSONUtils.BAKING_JSON_FILE_NAME, getApplicationContext());
         for (Recipe recipe : recipes) {
             if (recipe.getId() == selection) {
                 this.recipe = recipe;
@@ -64,7 +63,7 @@ public class RecipeStepListActivity extends AppCompatActivity implements RecipeS
             recipeId = recipe.getId();
         }
         appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_list_view);
-        RecipeWidgetProvider.updateAllRecipeAppWidgets(this, appWidgetManager, appWidgetIds, recipeId);
+        RecipeWidgetProvider.updateAllRecipeAppWidgets(this, appWidgetManager, appWidgetIds, recipeId, recipes);
 
         // has the same fragment already replaced the container and assumed its id?
         MediaInstructionFragment existingFragment =

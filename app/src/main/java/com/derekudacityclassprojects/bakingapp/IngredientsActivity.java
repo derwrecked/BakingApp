@@ -24,7 +24,7 @@ public class IngredientsActivity extends AppCompatActivity {
         Intent intent = getIntent();
         int recipe = intent.getIntExtra(RecipeStepListFragment.EXTRA_RECIPE_ID, -1);
         if(recipe != -1){
-            Recipe[] recipes = JSONUtils.getAllRecipes(JSONUtils.BAKING_JSON_FILE_NAME, getApplicationContext());
+            Recipe[] recipes = JSONUtils.getAllRecipesFromAsset(JSONUtils.BAKING_JSON_FILE_NAME, getApplicationContext());
             for (Recipe item : recipes) {
                 if (item.getId() == recipe) {
                     this.recipe = item;

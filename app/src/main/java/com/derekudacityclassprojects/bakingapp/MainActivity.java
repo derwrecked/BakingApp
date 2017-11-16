@@ -12,6 +12,7 @@ import android.util.DisplayMetrics;
 
 import com.derekudacityclassprojects.bakingapp.FragmentRecipeList.Recipe;
 import com.derekudacityclassprojects.bakingapp.FragmentRecipeList.RecipeListFragment;
+import com.derekudacityclassprojects.bakingapp.FragmentRecipeStepList.RecipeStepListFragment;
 
 public class MainActivity extends AppCompatActivity implements RecipeListFragment.OnListFragmentInteractionListener {
     public static final String EXTRA_RECIPE_ID_SELECTION = "recipe_id";
@@ -74,5 +75,8 @@ public class MainActivity extends AppCompatActivity implements RecipeListFragmen
                 finish();
             }
         }
+    }
+    public RecipeListFragment getRecipeListFragment(){
+        return recipeListFragment;
     }
 }

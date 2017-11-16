@@ -122,19 +122,6 @@ public class MediaInstructionFragment extends Fragment implements Player.EventLi
         });
         noMediaImageView = view.findViewById(R.id.no_media_image_view);
 
-        if(mExoPlayer != null){
-            mExoPlayer.stop();
-            mExoPlayer.release();
-            mExoPlayer = null;
-        }
-
-        if(mediaUrl != null){
-            noMediaImageView.setVisibility(View.GONE);
-            // Initialize the Media Session.
-            initializeMediaSession();
-            // Initialize the player.
-            initializePlayer(mediaUrl, getContext());
-        }
         // Inflate the layout for this fragment
         return view;
     }
@@ -160,16 +147,23 @@ public class MediaInstructionFragment extends Fragment implements Player.EventLi
     @Override
     public void onPause() {
         if(mExoPlayer != null){
-            position = mExoPlayer.getContentPosition();
             mExoPlayer.setPlayWhenReady(false);
             mExoPlayer.getPlaybackState();
             position = mExoPlayer.getCurrentPosition();
         }
+        releasePlayer();
         super.onPause();
     }
 
     @Override
     public void onResume() {
+        if(mediaUrl != null){
+            noMediaImageView.setVisibility(View.GONE);
+            // Initialize the Media Session.
+            initializeMediaSession();
+            // Initialize the player.
+            initializePlayer(mediaUrl, getContext());
+        }
         super.onResume();
     }
 
@@ -179,11 +173,6 @@ public class MediaInstructionFragment extends Fragment implements Player.EventLi
         mListener = null;
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        releasePlayer();
-    }
 
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name

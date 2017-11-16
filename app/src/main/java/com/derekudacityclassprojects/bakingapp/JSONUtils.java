@@ -20,7 +20,7 @@ public class JSONUtils {
      * @param filename
      * @return
      */
-    public static Recipe[] getAllRecipes(String filename, Context context){
+    public static Recipe[] getAllRecipesFromAsset(String filename, Context context){
         if(recipes != null && recipes.length != 0){
             return recipes;
         }
@@ -38,7 +38,27 @@ public class JSONUtils {
         }
         return recipes;
     }
-
+    /**
+     * Returns a list of recipes; an empty list if nothing is found or an error occurs.
+     * @return
+     */
+    public static Recipe[] getAllRecipesFromString(String json){
+        if(recipes != null && recipes.length != 0){
+            return recipes;
+        }
+        Gson gson = new Gson();
+        Recipe[] recipes;
+        try {
+            recipes = gson.fromJson(json, Recipe[].class);
+            if(recipes == null){
+                recipes = new Recipe[0];
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Recipe[0];
+        }
+        return recipes;
+    }
     /**
      * Load json to string.
      * @param filename

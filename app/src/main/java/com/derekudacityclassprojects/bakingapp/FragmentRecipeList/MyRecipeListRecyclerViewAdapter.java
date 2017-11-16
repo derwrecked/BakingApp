@@ -16,7 +16,7 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 public class MyRecipeListRecyclerViewAdapter extends RecyclerView.Adapter<MyRecipeListRecyclerViewAdapter.ViewHolder> {
 
-    private final ArrayList<Recipe> mValues;
+    private ArrayList<Recipe> mValues;
     private final OnListFragmentInteractionListener mListener;
     private Context context;
     public MyRecipeListRecyclerViewAdapter(Recipe[] items,
@@ -71,6 +71,7 @@ public class MyRecipeListRecyclerViewAdapter extends RecyclerView.Adapter<MyReci
         return mValues.size();
     }
 
+
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView recipeName;
@@ -88,5 +89,17 @@ public class MyRecipeListRecyclerViewAdapter extends RecyclerView.Adapter<MyReci
         public String toString() {
             return super.toString() + " '" + recipeName.getText() + "'";
         }
+    }
+
+    public ArrayList<Recipe> getmValues() {
+        return mValues;
+    }
+
+    public void setmValues(Recipe[] recipes) {
+        this.mValues = new ArrayList<>();
+        for(Recipe recipe : recipes){
+            mValues.add(recipe);
+        }
+        notifyDataSetChanged();
     }
 }

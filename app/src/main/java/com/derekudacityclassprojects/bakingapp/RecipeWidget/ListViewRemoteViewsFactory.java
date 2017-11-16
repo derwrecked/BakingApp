@@ -1,15 +1,12 @@
 package com.derekudacityclassprojects.bakingapp.RecipeWidget;
 
 import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
 import com.derekudacityclassprojects.bakingapp.FragmentRecipeList.Ingredient;
 import com.derekudacityclassprojects.bakingapp.FragmentRecipeList.Recipe;
 import com.derekudacityclassprojects.bakingapp.JSONUtils;
-import com.derekudacityclassprojects.bakingapp.MainActivity;
 import com.derekudacityclassprojects.bakingapp.R;
 
 import java.util.ArrayList;
@@ -35,10 +32,9 @@ public class ListViewRemoteViewsFactory implements RemoteViewsService.RemoteView
     // on create and whenever it is notified to update its data.
     @Override
     public void onDataSetChanged() {
-        Recipe[] recipes = JSONUtils.getAllRecipes("baking", context);
         ingredientList = new ArrayList<>();
         try {
-            for (Recipe item : recipes) {
+            for (Recipe item : RecipeWidgetProvider.recipes) {
                 if (item.getId() == RecipeWidgetProvider.currentRecipeId) {
                     ingredientList = item.getIngredients();
                     break;

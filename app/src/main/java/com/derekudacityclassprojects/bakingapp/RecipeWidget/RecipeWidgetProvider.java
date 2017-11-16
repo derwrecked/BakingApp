@@ -1,6 +1,5 @@
 package com.derekudacityclassprojects.bakingapp.RecipeWidget;
 
-import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
@@ -11,28 +10,28 @@ import android.widget.RemoteViews;
 import com.derekudacityclassprojects.bakingapp.FragmentRecipeList.Recipe;
 import com.derekudacityclassprojects.bakingapp.JSONUtils;
 import com.derekudacityclassprojects.bakingapp.R;
-import com.derekudacityclassprojects.bakingapp.RecipeStepListActivity;
-
-import java.util.ArrayList;
 
 /**
  * Implementation of App Widget functionality.
  */
 public class RecipeWidgetProvider extends AppWidgetProvider {
     public static int currentRecipeId = 1; // default to 1
+    public static Recipe[] recipes;
 
     public static void updateRecipeAppWidget(Context context, AppWidgetManager appWidgetManager,
-                                int appWidgetId, int recipeId) {
+                                int appWidgetId, int recipeId, Recipe[] recipesAll) {
         currentRecipeId = recipeId;
-        RemoteViews views = getRecipeListViewRemoteView(context, currentRecipeId);
+        recipes = recipesAll;
+        RemoteViews views = getRecipeListViewRemoteView(context, currentRecipeId, recipes);
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
 
     public static void updateAllRecipeAppWidgets(Context context, AppWidgetManager appWidgetManager,
-                                             int[] appWidgetIds, int recipeId) {
+                                             int[] appWidgetIds, int recipeId, Recipe[] recipesAll) {
         currentRecipeId = recipeId;
-        RemoteViews views = getRecipeListViewRemoteView(context, currentRecipeId);
+        recipes = recipesAll;
+        RemoteViews views = getRecipeListViewRemoteView(context, currentRecipeId, recipes);
         // There may be multiple widgets active, so update all of them
         for (int appWidgetId : appWidgetIds) {
             appWidgetManager.updateAppWidget(appWidgetId, views);
@@ -44,7 +43,7 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         // There may be multiple widgets active, so update all of them
         for (int appWidgetId : appWidgetIds) {
-            updateRecipeAppWidget(context, appWidgetManager, appWidgetId, currentRecipeId);
+            updateRecipeAppWidget(context, appWidgetManager, appWidgetId, currentRecipeId, recipes);
         }
     }
 
@@ -58,7 +57,7 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
      */
     @Override
     public void onAppWidgetOptionsChanged(Context context, AppWidgetManager appWidgetManager, int appWidgetId, Bundle newOptions) {
-        updateRecipeAppWidget(context, appWidgetManager, appWidgetId, currentRecipeId);
+        updateRecipeAppWidget(context, appWidgetManager, appWidgetId, currentRecipeId, recipes);
         super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions);
     }
 
@@ -72,20 +71,26 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
         // Enter relevant functionality for when the last widget is disabled
     }
 
-    private static RemoteViews getRecipeListViewRemoteView(Context context, int recipeId){
+    private static RemoteViews getRecipeListViewRemoteView(Context context,
+                                                           int recipeId,
+                                                           Recipe[] recipes){
         RemoteViews view = new RemoteViews(context.getPackageName(), R.layout.recipe_widget_list_view);
-        Recipe[] recipes = JSONUtils.getAllRecipes("baking", context);
         String title = "";
-        try {
-            for (Recipe item : recipes) {
-                if (item.getId() == recipeId) {
-                    title = item.getName();
-                    break;
-                }
-            }
-        } catch (Exception e) {
+        if(recipes == null){
             title = context.getString(R.string.widget_title_no_recipe_selected);
+        }else{
+            try {
+                for (Recipe item : recipes) {
+                    if (item.getId() == recipeId) {
+                        title = item.getName();
+                        break;
+                    }
+                }
+            } catch (Exception e) {
+                title = context.getString(R.string.widget_title_no_recipe_selected);
+            }
         }
+
         // service acts as adapter
         Intent intent = new Intent(context, RecipeWidgetService.class);
         view.setRemoteAdapter(R.id.widget_list_view, intent);

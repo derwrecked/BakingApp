@@ -3,20 +3,16 @@ package com.derekudacityclassprojects.bakingapp;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 
 import com.derekudacityclassprojects.bakingapp.FragmentMediaAndInstruction.MediaInstructionFragment;
 import com.derekudacityclassprojects.bakingapp.FragmentRecipeList.Recipe;
 import com.derekudacityclassprojects.bakingapp.FragmentRecipeList.RecipeStep;
-import com.derekudacityclassprojects.bakingapp.FragmentRecipeStepList.RecipeStepListFragment;
 
 import java.util.List;
 
@@ -36,7 +32,7 @@ public class RecipeSingleStepDisplayActivity extends AppCompatActivity implement
         if (recipeid == -1 || recipestepid == -1) {
             finish();
         }
-        Recipe[] recipes = JSONUtils.getAllRecipes(JSONUtils.BAKING_JSON_FILE_NAME, getApplicationContext());
+        Recipe[] recipes = JSONUtils.getAllRecipesFromAsset(JSONUtils.BAKING_JSON_FILE_NAME, getApplicationContext());
         for (Recipe recipe : recipes) {
             if (recipe.getId() == recipeid) {
                 this.recipe = recipe;

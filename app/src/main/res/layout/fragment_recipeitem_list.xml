@@ -1,12 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/recipe_list_fragment_recycler_view"
-    android:name="com.derekudacityclassprojects.bakingapp.FragmentRecipeList.RecipeItemFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginLeft="5dp"
-    android:layout_marginRight="5dp"
-    tools:context="com.derekudacityclassprojects.bakingapp.FragmentRecipeList.RecipeListFragment"
-    tools:listitem="@layout/fragment_recipeitem" />
+    tools:context="com.derekudacityclassprojects.bakingapp.MainActivity">
+
+    <android.support.v7.widget.RecyclerView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/recipe_list_fragment_recycler_view"
+        android:name="com.derekudacityclassprojects.bakingapp.FragmentRecipeList.RecipeItemFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        tools:context="com.derekudacityclassprojects.bakingapp.FragmentRecipeList.RecipeListFragment"
+        tools:listitem="@layout/fragment_recipeitem" />
+
+    <ProgressBar
+        android:id="@+id/recipe_list_fragment_progress_bar"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minHeight="80dp"
+        android:minWidth="80dp"/>
+
+    <TextView
+        android:layout_gravity="center"
+        android:id="@+id/recipe_list_fragment_could_not_fetch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textSize="20dp"
+        android:text="Could not fetch..."/>
+
+</FrameLayout>
+
