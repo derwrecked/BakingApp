@@ -83,7 +83,7 @@ public class RecipeStepListFragment extends Fragment {
         } else {
             recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
         }
-        recyclerView.setAdapter(new MyRecipeStepListRecyclerViewAdapter(new ArrayList<RecipeStep>(), mListener));
+        recyclerView.setAdapter(new MyRecipeStepListRecyclerViewAdapter(getContext(), new ArrayList<RecipeStep>(), mListener));
 
         return view;
     }
