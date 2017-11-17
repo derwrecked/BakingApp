@@ -18,6 +18,8 @@ import android.widget.TextView;
 import com.derekudacityclassprojects.bakingapp.JSONUtils;
 import com.derekudacityclassprojects.bakingapp.NetworkChangeReceiver;
 import com.derekudacityclassprojects.bakingapp.R;
+import com.derekudacityclassprojects.bakingapp.RecipeRepository;
+import com.derekudacityclassprojects.bakingapp.SimpleIdlingResource;
 
 /**
  * A fragment representing a list of Items.
@@ -174,6 +176,7 @@ public class RecipeListFragment extends Fragment {
         couldNotFetchTextView.setVisibility(View.INVISIBLE);
         this.jsonString = jsonString;
         this.recipes = recipes;
+        RecipeRepository.createInstance(recipes);
         adapter = (MyRecipeListRecyclerViewAdapter) recyclerView.getAdapter();
         adapter.setmValues(recipes);
     }

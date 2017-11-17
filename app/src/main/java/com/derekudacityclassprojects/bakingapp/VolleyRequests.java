@@ -1,6 +1,7 @@
 package com.derekudacityclassprojects.bakingapp;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -17,38 +18,9 @@ import org.json.JSONObject;
 
 public class VolleyRequests {
     public static String VOLLEY_KEY_TAG = "VOLLEY_KEY_TAG";
-    public static void getBakingJSON(String url, final MainActivity mainActivity){
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest
-                (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            if (response != null) {
-                                String json = response.toString();
-                                Recipe[] recipes = JSONUtils.getAllRecipesFromString(json);
-                                mainActivity.getRecipeListFragment().setRecipeList(json, recipes);
-                            }else{
-                                mainActivity.getRecipeListFragment().setCouldNotFetch();
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        error.printStackTrace();
-                        mainActivity.getRecipeListFragment().setCouldNotFetch();
-                    }
-                });
-        // set tag so we can cancel if need be
-        jsObjRequest.setTag(VOLLEY_KEY_TAG);
 
-        // Access the RequestQueue through your singleton class.
-        RequestQueueSingleton.getInstance(mainActivity).addToRequestQueue(jsObjRequest);
-    }
-
-    public static void getBakingJSONString(String url, final MainActivity mainActivity){
+    public static void getBakingJSONString(String url,
+                                           final MainActivity mainActivity){
         // Request a string response from the provided URL.
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
@@ -66,12 +38,21 @@ public class VolleyRequests {
                             e.printStackTrace();
                             mainActivity.getRecipeListFragment().setCouldNotFetch();
                         }
+                        // only for testing
+                        if (mainActivity.getIdlingResource() != null) {
+                            mainActivity.getIdlingResource().setIdleState(true);
+                        }
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
                 mainActivity.getRecipeListFragment().setCouldNotFetch();
+
+                // only for testing
+                if (mainActivity.getIdlingResource() != null) {
+                    mainActivity.getIdlingResource().setIdleState(true);
+                }
             }
         });
 

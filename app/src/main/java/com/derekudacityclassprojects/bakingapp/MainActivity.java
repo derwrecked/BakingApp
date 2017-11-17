@@ -4,6 +4,9 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
+import android.support.test.espresso.IdlingResource;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -20,6 +23,11 @@ public class MainActivity extends AppCompatActivity implements RecipeListFragmen
     private final String TAG = MainActivity.class.getSimpleName();
     private final int MY_PERMISSIONS_REQUEST_INTERNET = 28;
     private RecipeListFragment recipeListFragment;
+
+    // The Idling Resource which will be null in production.
+    @Nullable
+    private SimpleIdlingResource mIdlingResource;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,5 +86,22 @@ public class MainActivity extends AppCompatActivity implements RecipeListFragmen
     }
     public RecipeListFragment getRecipeListFragment(){
         return recipeListFragment;
+    }
+
+    @Nullable
+    public SimpleIdlingResource getIdlingResource() {
+        return mIdlingResource;
+    }
+    /**
+     * Only called from test, creates and returns a new {@link SimpleIdlingResource}.
+     */
+    @VisibleForTesting
+    @NonNull
+    public IdlingResource setIdlingResource() {
+        if (mIdlingResource == null) {
+            mIdlingResource = new SimpleIdlingResource();
+            mIdlingResource.setIdleState(false);
+        }
+        return mIdlingResource;
     }
 }

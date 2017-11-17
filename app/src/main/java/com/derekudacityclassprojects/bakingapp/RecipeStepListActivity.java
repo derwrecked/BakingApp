@@ -41,7 +41,7 @@ public class RecipeStepListActivity extends AppCompatActivity implements RecipeS
             finish();
         }
         setContentView(R.layout.activity_recipe_step);
-        Recipe[] recipes = JSONUtils.getAllRecipesFromAsset(JSONUtils.BAKING_JSON_FILE_NAME, getApplicationContext());
+        Recipe[] recipes = RecipeRepository.getRecipeList();
         for (Recipe recipe : recipes) {
             if (recipe.getId() == selection) {
                 this.recipe = recipe;

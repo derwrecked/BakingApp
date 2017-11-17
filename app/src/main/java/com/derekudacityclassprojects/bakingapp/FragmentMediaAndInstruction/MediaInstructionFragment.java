@@ -82,6 +82,8 @@ public class MediaInstructionFragment extends Fragment implements Player.EventLi
     public void onSaveInstanceState(Bundle outState) {
         if(mediaUrl != null){
             outState.putString(SAVE_STATE_URI_KEY, mediaUrl.toString());
+        }else{
+            outState.putString(SAVE_STATE_URI_KEY, "");
         }
         outState.putLong(SAVE_STATE_PLAYER_POSITION, position);
         outState.putString(SAVE_STATE_STEP_KEY, stepDescription);
@@ -157,7 +159,7 @@ public class MediaInstructionFragment extends Fragment implements Player.EventLi
 
     @Override
     public void onResume() {
-        if(mediaUrl != null){
+        if(mediaUrl != null && !mediaUrl.toString().isEmpty()){
             noMediaImageView.setVisibility(View.GONE);
             // Initialize the Media Session.
             initializeMediaSession();

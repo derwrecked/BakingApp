@@ -18,21 +18,36 @@ import java.util.List;
 
 public class RecipeSingleStepDisplayActivity extends AppCompatActivity implements MediaInstructionFragment.OnFragmentInteractionListener {
     private Recipe recipe;
+    private int recipestepid;
+    private int currentStepIndex;
     private RecipeStep recipeStep;
     private List<RecipeStep> recipeStepList;
     private MediaInstructionFragment mediaInstructionFragment;
+    public static final String SAVE_STEP_ID = "SAVE_STEP_ID";
     private String FRAGMENT_TAG = "FRAGMENT_TAG_SINGLE";
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putInt(SAVE_STEP_ID, recipestepid);
+        super.onSaveInstanceState(outState);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_single_step_display);
         int recipeid = getIntent().getIntExtra(RecipeStepListActivity.EXTRA_RECIPE_ID, -1);
-        int recipestepid = getIntent().getIntExtra(RecipeStepListActivity.EXTRA_RECIPE_STEP_ID, -1);
+        if(savedInstanceState != null){
+            recipestepid = savedInstanceState.getInt(SAVE_STEP_ID, -1);
+        }else{
+            recipestepid = getIntent().getIntExtra(RecipeStepListActivity.EXTRA_RECIPE_STEP_ID, -1);
+        }
+
         if (recipeid == -1 || recipestepid == -1) {
             finish();
         }
-        Recipe[] recipes = JSONUtils.getAllRecipesFromAsset(JSONUtils.BAKING_JSON_FILE_NAME, getApplicationContext());
+        Recipe[] recipes = RecipeRepository.getRecipeList();
+        currentStepIndex = 0;
         for (Recipe recipe : recipes) {
             if (recipe.getId() == recipeid) {
                 this.recipe = recipe;
@@ -43,6 +58,7 @@ public class RecipeSingleStepDisplayActivity extends AppCompatActivity implement
                             this.recipeStep = step;
                             break;
                         }
+                        currentStepIndex++;
                     }
                 }
                 break;
@@ -75,11 +91,13 @@ public class RecipeSingleStepDisplayActivity extends AppCompatActivity implement
                 mediaInstructionFragment.releasePlayer();
             }
             if (isNext) {
-                recipeStep = getNextStep(recipeStep, recipeStepList);
+                currentStepIndex = getNextStep(currentStepIndex, recipeStepList);
             } else {
-                recipeStep = getPreviousStep(recipeStep, recipeStepList);
+                currentStepIndex = getPreviousStep(currentStepIndex, recipeStepList);
             }
+            recipeStep = recipeStepList.get(currentStepIndex);
             mediaInstructionFragment = createFragment(recipeStep);
+            recipestepid = recipeStep.getId();
             // add fragment
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -90,30 +108,32 @@ public class RecipeSingleStepDisplayActivity extends AppCompatActivity implement
 
     /**
      * Get next step.
-     * @param currentStep
+     * @param stepIndex
      * @param recipeStepList
      * @return
      */
-    private static RecipeStep getNextStep(final RecipeStep currentStep, final List<RecipeStep> recipeStepList) {
+    private static int getNextStep(int stepIndex, final List<RecipeStep> recipeStepList) {
         if (recipeStepList.size() == 0
-                || currentStep.getId() == recipeStepList.get(recipeStepList.size() - 1).getId()) {
-            return currentStep;
+                || stepIndex == (recipeStepList.size() - 1)) {
+            return stepIndex;
         } else {
-            return recipeStepList.get(currentStep.getId() + 1);
+            // increment after calculation
+            return ++stepIndex;
         }
     }
 
     /**
      * Get previous step.
-     * @param currentStep
      * @param recipeStepList
+     * @param stepIndex
      * @return
      */
-    private static RecipeStep getPreviousStep(final RecipeStep currentStep, final List<RecipeStep> recipeStepList) {
-        if (currentStep.getId() == 0) {
-            return currentStep;
+    private static int getPreviousStep(int stepIndex, final List<RecipeStep> recipeStepList) {
+        if (stepIndex == 0) {
+            return stepIndex;
         } else {
-            return recipeStepList.get(currentStep.getId() - 1);
+            // increment after calculation
+            return --stepIndex;
         }
     }
 

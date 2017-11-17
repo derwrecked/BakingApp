@@ -46,9 +46,9 @@ public class Test_RecipeStepListFragment_Ingredients {
         // loop through all recipes
         for(int i = 0; i < recipes.length; i++){
             // scroll to position
-            onView(withId(R.id.recipeListFragment)).perform(RecyclerViewActions.scrollToPosition(i));
+            onView(withId(R.id.recipe_list_fragment_recycler_view)).perform(RecyclerViewActions.scrollToPosition(i));
             // click
-            onView(withId(R.id.recipeListFragment)).perform(RecyclerViewActions.actionOnItemAtPosition(i, click()));
+            onView(withId(R.id.recipe_list_fragment_recycler_view)).perform(RecyclerViewActions.actionOnItemAtPosition(i, click()));
 
             // find ingredients button
             onView(withId(R.id.recipe_step_list_ingredients_button)).check(matches(isDisplayed()));
